@@ -43,7 +43,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      gap: 14px;
       flex: 1;
     }
     .card-header { width: 100%; display: flex; align-items: center; gap: 12px; }
@@ -64,8 +64,8 @@
       padding: 14px 16px 10px;
       width: 100%;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
-      margin-top: -12px;
     }
+
     #barcode-canvas { width: 100%; height: auto; display: block; }
     .barcode-number { font-size: 13px; font-weight: 500; letter-spacing: 2.5px; color: #1a1a1a; font-variant-numeric: tabular-nums; }
     .qr-section { display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -76,21 +76,28 @@
     .cn-value { font-size: 18px; font-weight: 300; color: var(--accent); letter-spacing: 3px; }
     .brightness-btn {
       width: 100%;
-      background: rgba(232, 213, 183, 0.08);
-      border: 1px solid rgba(232, 213, 183, 0.15);
-      border-radius: 12px;
-      color: var(--accent);
-      font-size: 14px; font-weight: 500;
-      padding: 12px; cursor: pointer;
-      transition: background 0.15s;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none;
+      border-radius: 16px;
+      color: #1a1a2e;
+      font-size: 15px; font-weight: 600;
+      padding: 16px;
+      cursor: pointer;
+      transition: opacity 0.15s;
       -webkit-appearance: none;
       letter-spacing: -0.2px;
+      margin-top: auto;
     }
-    .brightness-btn:active { background: rgba(232, 213, 183, 0.18); }
+    .brightness-btn:active { opacity: 0.8; }
   </style>
 </head>
 <body>
   <div class="card">
+    <div class="barcode-wrap">
+      <canvas id="barcode-canvas"></canvas>
+      <div class="barcode-number" id="barcode-text">N009121682</div>
+    </div>
+    <div class="divider"></div>
     <div class="card-header">
       <div class="library-icon">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -104,11 +111,6 @@
         <p>Scan at any library terminal</p>
       </div>
     </div>
-    <div class="divider"></div>
-    <div class="barcode-wrap">
-      <canvas id="barcode-canvas"></canvas>
-      <div class="barcode-number" id="barcode-text">N009121682</div>
-    </div>
     <div class="qr-section">
       <div class="qr-label">QR backup</div>
       <canvas id="qr-canvas"></canvas>
@@ -118,7 +120,7 @@
       <span class="cn-value">N009121682</span>
     </div>
     <button class="brightness-btn" onclick="boostBrightness()">
-      Maximize screen brightness
+      ☀ Maksimer lysstyrke for skanning
     </button>
   </div>
   <script>
