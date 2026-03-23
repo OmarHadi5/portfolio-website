@@ -29,8 +29,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 16px);
+      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px);
       min-height: 100vh;
     }
     .card {
@@ -38,17 +37,18 @@
       border-radius: 24px;
       width: 100%;
       max-width: 380px;
-      padding: 28px 24px 32px;
+      padding: 20px 20px 24px;
       box-shadow: 0 24px 64px rgba(0,0,0,0.5);
       border: 1px solid rgba(232, 213, 183, 0.12);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      justify-content: space-between;
+      flex: 1;
     }
     .card-header { width: 100%; display: flex; align-items: center; gap: 12px; }
     .library-icon {
-      width: 40px; height: 40px;
+      width: 38px; height: 38px;
       background: linear-gradient(135deg, var(--accent2), var(--accent));
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
@@ -61,16 +61,17 @@
     .barcode-wrap {
       background: var(--white);
       border-radius: 14px;
-      padding: 16px 20px 12px;
+      padding: 14px 16px 10px;
       width: 100%;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      margin-top: -12px;
     }
     #barcode-canvas { width: 100%; height: auto; display: block; }
     .barcode-number { font-size: 13px; font-weight: 500; letter-spacing: 2.5px; color: #1a1a1a; font-variant-numeric: tabular-nums; }
-    .qr-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .qr-section { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .qr-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-    #qr-canvas { border-radius: 8px; width: 145px; height: 145px; }
-    .card-number-row { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    #qr-canvas { border-radius: 6px; width: 130px; height: 130px; }
+    .card-number-row { display: flex; flex-direction: column; align-items: center; gap: 2px; }
     .cn-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); }
     .cn-value { font-size: 18px; font-weight: 300; color: var(--accent); letter-spacing: 3px; }
     .brightness-btn {
@@ -208,9 +209,9 @@
       return{generateQR};
     })();
 
-    // Draw QR with proper 4-module quiet zone on all sides
+    // Draw QR with reduced 2-module quiet zone
     function drawQR(canvas, text) {
-      const QUIET = 4;
+      const QUIET = 2;
       const qr = QRCode.generateQR(text);
       const n = qr.size;
       const moduleSize = 5;
@@ -234,12 +235,13 @@
     function boostBrightness(){
       if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{});
       const ov=document.createElement('div');
-      ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+      // Barcode at TOP, not centered
+      ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;padding-top:env(safe-area-inset-top, 20px);';
       const inn=document.createElement('div');
-      inn.style.cssText='background:#fff;padding:20px 24px 14px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:8px;';
+      inn.style.cssText='background:#fff;padding:16px 20px 10px;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:8px;';
       const bc2=document.createElement('canvas');
       drawCode128(bc2,BARCODE_VALUE);
-      bc2.style.cssText='width:100%;max-width:340px;height:auto;';
+      bc2.style.cssText='width:100%;height:auto;';
       inn.appendChild(bc2);
       const nm=document.createElement('div');
       nm.textContent=BARCODE_VALUE;
@@ -248,7 +250,7 @@
       ov.appendChild(inn);
       const btn=document.createElement('button');
       btn.textContent='Tap to go back';
-      btn.style.cssText='background:rgba(0,0,0,0.08);border:none;border-radius:10px;padding:12px 28px;font-size:15px;color:#333;font-family:-apple-system,sans-serif;cursor:pointer;';
+      btn.style.cssText='margin-top:20px;background:rgba(0,0,0,0.08);border:none;border-radius:10px;padding:12px 28px;font-size:15px;color:#333;font-family:-apple-system,sans-serif;cursor:pointer;';
       btn.onclick=()=>document.body.removeChild(ov);
       ov.appendChild(btn);
       document.body.appendChild(ov);
