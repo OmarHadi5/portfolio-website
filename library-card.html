@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Library Card" />
+  <title>Library Card</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #1a1a2e;
+      --card: #16213e;
+      --accent: #e8d5b7;
+      --accent2: #c9a96e;
+      --text: #f0ece4;
+      --muted: #8a8070;
+      --white: #ffffff;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 16px);
+      min-height: 100vh;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 380px;
+      padding: 28px 24px 32px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      border: 1px solid rgba(232, 213, 183, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .card-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .library-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .library-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .header-text h1 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(232, 213, 183, 0.08);
+    }
+
+    .barcode-wrap {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 16px 20px 12px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #barcode-canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .barcode-number {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      color: #1a1a1a;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qr-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #qr-canvas {
+      border-radius: 8px;
+    }
+
+    .card-number-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cn-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+    }
+
+    .cn-value {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 3px;
+    }
+
+    .brightness-tip {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .brightness-btn {
+      width: 100%;
+      background: rgba(232, 213, 183, 0.08);
+      border: 1px solid rgba(232, 213, 183, 0.15);
+      border-radius: 12px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      -webkit-appearance: none;
+      letter-spacing: -0.2px;
+    }
+
+    .brightness-btn:active {
+      background: rgba(232, 213, 183, 0.18);
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="library-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 19V6a2 2 0 012-2h12a2 2 0 012 2v13" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M4 19a2 2 0 002 2h12a2 2 0 002-2" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M9 8h6M9 11h4" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>Library Card</h1>
+      <p>Scan at any library terminal</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="barcode-wrap">
+    <canvas id="barcode-canvas"></canvas>
+    <div class="barcode-number" id="barcode-text">N009121682</div>
+  </div>
+
+  <div class="qr-section">
+    <div class="qr-label">QR backup</div>
+    <canvas id="qr-canvas" width="120" height="120"></canvas>
+  </div>
+
+  <div class="card-number-row">
+    <span class="cn-label">Card number</span>
+    <span class="cn-value">N009121682</span>
+  </div>
+
+  <button class="brightness-btn" onclick="boostBrightness()">
+    Maximize screen brightness
+  </button>
+</div>
+
+<script>
+const BARCODE_VALUE = "N009121682";
+
+function drawCode128(canvas, value) {
+  const charSet = {
+    ' ':0,'!':1,'"':2,'#':3,'$':4,'%':5,'&':6,"'":7,'(':8,')':9,
+    '*':10,'+':11,',':12,'-':13,'.':14,'/':15,'0':16,'1':17,'2':18,'3':19,
+    '4':20,'5':21,'6':22,'7':23,'8':24,'9':25,':':26,';':27,'<':28,'=':29,
+    '>':30,'?':31,'@':32,'A':33,'B':34,'C':35,'D':36,'E':37,'F':38,'G':39,
+    'H':40,'I':41,'J':42,'K':43,'L':44,'M':45,'N':46,'O':47,'P':48,'Q':49,
+    'R':50,'S':51,'T':52,'U':53,'V':54,'W':55,'X':56,'Y':57,'Z':58,'[':59,
+    '\\':60,']':61,'^':62,'_':63,'`':64,'a':65,'b':66,'c':67,'d':68,'e':69,
+    'f':70,'g':71,'h':72,'i':73,'j':74,'k':75,'l':76,'m':77,'n':78,'o':79,
+    'p':80,'q':81,'r':82,'s':83,'t':84,'u':85,'v':86,'w':87,'x':88,'y':89,
+    'z':90,'{':91,'|':92,'}':93,'~':94
+  };
+
+  const patterns = [
+    [2,1,2,2,2,2],[2,2,2,1,2,2],[2,2,2,2,2,1],[1,2,1,2,2,3],[1,2,1,3,2,2],
+    [1,3,1,2,2,2],[1,2,2,2,1,3],[1,2,2,3,1,2],[1,3,2,2,1,2],[2,2,1,2,1,3],
+    [2,2,1,3,1,2],[2,3,1,2,1,2],[1,1,2,2,3,2],[1,2,2,1,3,2],[1,2,2,2,3,1],
+    [1,1,3,2,2,2],[1,2,3,1,2,2],[1,2,3,2,2,1],[2,2,3,2,1,1],[2,2,1,1,3,2],
+    [2,2,1,2,3,1],[2,1,3,2,1,2],[2,2,3,1,1,2],[3,1,2,1,3,1],[3,1,1,2,2,2],
+    [3,2,1,1,2,2],[3,2,1,2,2,1],[3,1,2,2,1,2],[3,2,2,1,1,2],[3,2,2,2,1,1],
+    [2,1,2,1,2,3],[2,1,2,3,2,1],[2,3,2,1,2,1],[1,1,1,3,2,3],[1,3,1,1,2,3],
+    [1,3,1,3,2,1],[1,1,2,3,1,3],[1,3,2,1,1,3],[1,3,2,3,1,1],[2,1,1,3,1,3],
+    [2,3,1,1,1,3],[2,3,1,3,1,1],[1,1,2,1,3,3],[1,1,2,3,3,1],[1,3,2,1,3,1],
+    [1,1,3,1,2,3],[1,1,3,3,2,1],[1,3,3,1,2,1],[3,1,3,1,2,1],[2,1,1,3,3,1],
+    [2,3,1,1,3,1],[2,1,3,1,1,3],[2,1,3,3,1,1],[2,1,3,1,3,1],[3,1,1,1,2,3],
+    [3,1,1,3,2,1],[3,3,1,1,2,1],[3,1,2,1,1,3],[3,1,2,3,1,1],[3,3,2,1,1,1],
+    [3,1,4,1,1,1],[2,2,1,4,1,1],[4,3,1,1,1,1],[1,1,1,2,2,4],[1,1,1,4,2,2],
+    [1,2,1,1,2,4],[1,2,1,4,2,1],[1,4,1,1,2,2],[1,4,1,2,2,1],[1,1,2,2,1,4],
+    [1,1,2,4,1,2],[1,2,2,1,1,4],[1,2,2,4,1,1],[1,4,2,1,1,2],[1,4,2,2,1,1],
+    [2,4,1,2,1,1],[2,2,1,1,1,4],[4,1,3,1,1,1],[2,4,1,1,1,2],[1,3,4,1,1,1],
+    [1,1,1,2,4,2],[1,2,1,1,4,2],[1,2,1,2,4,1],[1,1,4,2,1,2],[1,2,4,1,1,2],
+    [1,2,4,2,1,1],[4,1,1,2,1,2],[4,2,1,1,1,2],[4,2,1,2,1,1],[2,1,2,1,4,1],
+    [2,1,4,1,2,1],[4,1,2,1,2,1],[1,1,1,1,4,3],[1,1,1,3,4,1],[1,3,1,1,4,1],
+    [1,1,4,1,1,3],[1,1,4,3,1,1],[4,1,1,1,1,3],[4,1,1,3,1,1],[1,1,3,1,4,1],
+    [1,1,4,1,3,1],[3,1,1,1,4,1],[4,1,1,1,3,1],[2,1,1,4,1,2],[2,1,1,2,1,4],
+    [2,1,1,2,3,2],[2,3,3,1,1,1,2]
+  ];
+
+  const startB = 104;
+  const stopPattern = [2,3,3,1,1,1,2];
+
+  let codes = [startB];
+  let checksum = startB;
+  for (let i = 0; i < value.length; i++) {
+    const v = charSet[value[i]];
+    if (v === undefined) continue;
+    codes.push(v);
+    checksum += v * (i + 1);
+  }
+  codes.push(checksum % 103);
+
+  const moduleW = 2;
+  const barcodeH = 80;
+  const quietZone = 10;
+
+  let totalModules = quietZone;
+  for (const c of codes) {
+    for (const w of patterns[c]) totalModules += w;
+  }
+  for (const w of stopPattern) totalModules += w;
+  totalModules += quietZone;
+
+  canvas.width = totalModules * moduleW;
+  canvas.height = barcodeH;
+
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000000';
+
+  let x = quietZone * moduleW;
+  const drawPattern = (pat) => {
+    for (let i = 0; i < pat.length; i++) {
+      const w = pat[i] * moduleW;
+      if (i % 2 === 0) ctx.fillRect(x, 0, w, barcodeH);
+      x += w;
+    }
+  };
+
+  for (const c of codes) drawPattern(patterns[c]);
+  drawPattern(stopPattern);
+}
+
+function drawQR(canvas, text) {
+  const size = 120;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, size, size);
+
+  const msg = encodeURIComponent(text);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => ctx.drawImage(img, 0, 0, size, size);
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${msg}&bgcolor=ffffff&color=000000&margin=6`;
+}
+
+function boostBrightness() {
+  if (navigator.wakeLock) {
+    navigator.wakeLock.request('screen').catch(() => {});
+  }
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+
+  const inner = document.createElement('div');
+  inner.style.cssText = 'background:#fff;padding:20px 24px 14px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:8px;';
+
+  const bc2 = document.createElement('canvas');
+  drawCode128(bc2, BARCODE_VALUE);
+  bc2.style.cssText = 'width:100%;max-width:340px;height:auto;';
+  inner.appendChild(bc2);
+
+  const num = document.createElement('div');
+  num.textContent = BARCODE_VALUE;
+  num.style.cssText = 'font-size:13px;letter-spacing:2.5px;color:#111;font-family:-apple-system,sans-serif;font-variant-numeric:tabular-nums;';
+  inner.appendChild(num);
+  overlay.appendChild(inner);
+
+  const btn = document.createElement('button');
+  btn.textContent = 'Tap to go back';
+  btn.style.cssText = 'background:rgba(0,0,0,0.08);border:none;border-radius:10px;padding:12px 28px;font-size:15px;color:#333;font-family:-apple-system,sans-serif;cursor:pointer;';
+  btn.onclick = () => document.body.removeChild(overlay);
+  overlay.appendChild(btn);
+
+  document.body.appendChild(overlay);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  drawCode128(document.getElementById('barcode-canvas'), BARCODE_VALUE);
+  drawQR(document.getElementById('qr-canvas'), BARCODE_VALUE);
+});
+</script>
+</body>
+</html>
